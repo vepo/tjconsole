@@ -1,22 +1,54 @@
 package org.jsoftware.tjconsole;
 
-import jline.console.ConsoleReader;
-import jline.console.completer.Completer;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Properties;
+import java.util.prefs.BackingStoreException;
+
 import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.jsoftware.tjconsole.command.CmdDescription;
 import org.jsoftware.tjconsole.command.CommandAction;
-import org.jsoftware.tjconsole.command.definition.*;
+import org.jsoftware.tjconsole.command.definition.CommandDefinition;
+import org.jsoftware.tjconsole.command.definition.ConnectCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.DescribeCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.EnvCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.GetAttributeCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.HelpCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.InfoCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.InvokeOperationCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.ListCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.PsCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.QuitCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.SetAttributeCommandDefinition;
+import org.jsoftware.tjconsole.command.definition.UseCommandDefinition;
 import org.jsoftware.tjconsole.console.EndOfInputException;
 import org.jsoftware.tjconsole.console.Output;
 import org.jsoftware.tjconsole.console.ParseInputCommandCreationException;
 import org.jsoftware.tjconsole.console.ParseInputCommandNotFoundException;
 import org.jsoftware.tjconsole.util.MyDateConverter;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.prefs.BackingStoreException;
+import jline.console.ConsoleReader;
+import jline.console.completer.Completer;
 
 /**
  * Main application class
