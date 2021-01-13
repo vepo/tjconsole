@@ -24,55 +24,49 @@ public class DescribeCommandDefinition extends AbstractCommandDefinition {
         super("Describe attributes and operations of current bean.", "describe", "describe", true);
     }
 
-
     @Override
     public CommandAction action(String input) {
-        return new CommandAction() {
-            @Override
-            public void doAction(TJContext ctx, Output output) throws Exception {
-                List<String> outList = new ArrayList<String>();
-                for (MBeanAttributeInfo ai : ctx.getAttributes()) {
-                    StringBuilder sb = new StringBuilder("@|cyan ").append(ai.getName()).append(" |@");
-                    for (int i = ai.getName().length(); i < SPACE; i++) {
-                        sb.append(' ');
-                    }
-                    sb.append(" ").append(ai.isReadable() ? "R" : " ").append(ai.isWritable() ? "W" : " ").append("  ");
-                    describeType(ctx, ai.getName(), ai.getType(), sb);
-                    outList.add(sb.toString());
+        return (TJContext ctx, Output output) -> {
+            List<String> outList = new ArrayList<String>();
+            for (MBeanAttributeInfo ai : ctx.getAttributes()) {
+                StringBuilder sb = new StringBuilder("@|cyan ").append(ai.getName()).append(" |@");
+                for (int i = ai.getName().length(); i < SPACE; i++) {
+                    sb.append(' ');
                 }
-                for (MBeanOperationInfo oi : ctx.getServer().getMBeanInfo(ctx.getObjectName()).getOperations()) {
-                    StringBuilder out = new StringBuilder();
-                    out.append("@|green ").append(oi.getName());
-                    MBeanParameterInfo[] parameters = oi.getSignature();
-                    if (parameters.length == 0) {
-                        out.append("()|@");
-                    } else {
-                        out.append("(|@");
-                        for (int i = 0; i < parameters.length; i++) {
-                            out.append("@|blue ").append(parameters[i].getName()).append(':').append(parameters[i].getType()).append("|@");
-                            if (i + 1 < parameters.length) {
-                                out.append(",");
-                            }
-                        }
-                        out.append("@|green )|@");
-                    }
-                    out.append("  ");
-                    for (int i = oi.getName().length(); i < SPACE+2; i++) {
-                        out.append(' ');
-                    }
-                    describeType(ctx, oi.getName(), oi.getReturnType(), out);
-                    outList.add(out.toString());
-                }
-                Collections.sort(outList);
-                for (String s : outList) {
-                    output.println(s);
-                }
+                sb.append(" ").append(ai.isReadable() ? "R" : " ").append(ai.isWritable() ? "W" : " ").append("  ");
+                describeType(ctx, ai.getName(), ai.getType(), sb);
+                outList.add(sb.toString());
             }
+            for (MBeanOperationInfo oi : ctx.getServer().getMBeanInfo(ctx.getObjectName()).getOperations()) {
+                StringBuilder out = new StringBuilder();
+                out.append("@|green ").append(oi.getName());
+                MBeanParameterInfo[] parameters = oi.getSignature();
+                if (parameters.length == 0) {
+                    out.append("()|@");
+                } else {
+                    out.append("(|@");
+                    for (int i = 0; i < parameters.length; i++) {
+                        out.append("@|blue ").append(parameters[i].getName()).append(':').append(parameters[i].getType()).append("|@");
+                        if (i + 1 < parameters.length) {
+                            out.append(",");
+                        }
+                    }
+                    out.append("@|green )|@");
+                }
+                out.append("  ");
+                for (int i = oi.getName().length(); i < SPACE + 2; i++) {
+                    out.append(' ');
+                }
+                describeType(ctx, oi.getName(), oi.getReturnType(), out);
+                outList.add(out.toString());
+            }
+            outList.stream().forEachOrdered(output::println);
         };
 
     }
 
-    private void describeType(TJContext ctx, String name, String type, StringBuilder out) throws AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, IOException {
+    private void describeType(TJContext ctx, String name, String type, StringBuilder out)
+            throws AttributeNotFoundException, MBeanException, ReflectionException, InstanceNotFoundException, IOException {
         if (type.startsWith("javax.management.openmbean.TabularData")) {
             TabularData td = (TabularData) ctx.getServer().getAttribute(ctx.getObjectName(), name);
             describeType(td == null ? null : td.getTabularType(), out);
@@ -114,7 +108,7 @@ public class DescribeCommandDefinition extends AbstractCommandDefinition {
                 return;
             }
             if (type instanceof ArrayType) {
-                ArrayType arrayType = (ArrayType) type;
+                ArrayType<?> arrayType = (ArrayType<?>) type;
                 out.append(arrayType.getTypeName()).append(" (");
                 appendDescription(arrayType.getDescription(), out).append(" array of ");
                 describeType(arrayType.getElementOpenType(), out);
@@ -122,7 +116,7 @@ public class DescribeCommandDefinition extends AbstractCommandDefinition {
                 return;
             }
             if (type instanceof SimpleType) {
-                SimpleType simpleType = (SimpleType) type;
+                SimpleType<?> simpleType = (SimpleType<?>) type;
                 String typeName = simpleType.getTypeName();
                 if (typeName.startsWith("java.lang.")) {
                     typeName = typeName.substring("java.lang.".length());
@@ -135,7 +129,7 @@ public class DescribeCommandDefinition extends AbstractCommandDefinition {
                 return;
             }
             if (type instanceof OpenType) { // other OpenTypes - for future usage
-                OpenType openType = (OpenType) type;
+                OpenType<?> openType = (OpenType<?>) type;
                 out.append(openType.getTypeName()).append(" (");
                 appendDescription(openType.getDescription(), out);
                 out.append(" of ").append(openType.getClassName()).append(")");

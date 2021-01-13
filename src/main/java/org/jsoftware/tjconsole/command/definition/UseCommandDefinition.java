@@ -1,17 +1,18 @@
 package org.jsoftware.tjconsole.command.definition;
 
-import jline.console.completer.Completer;
-import org.jsoftware.tjconsole.TJContext;
-import org.jsoftware.tjconsole.command.CmdDescription;
-import org.jsoftware.tjconsole.command.CommandAction;
-import org.jsoftware.tjconsole.console.Output;
-
-import javax.management.ObjectName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.management.ObjectName;
+
+import org.jsoftware.tjconsole.TJContext;
+import org.jsoftware.tjconsole.command.CmdDescription;
+import org.jsoftware.tjconsole.command.CommandAction;
+
+import jline.console.completer.Completer;
 
 /**
  * Select mxBean to connect to.
@@ -25,36 +26,31 @@ public class UseCommandDefinition extends AbstractCommandDefinition {
         super("Select bean.", "use <beanName>", "use", false);
     }
 
-
     @Override
     public CommandAction action(final String input) {
-        return new CommandAction() {
-            @Override
-            public void doAction(TJContext ctx, Output output) throws Exception {
-                StringBuilder sb = new StringBuilder();
-                String bName = extractURL(input);
-                if (bName.length() == 0) {
-                    for (String bn : names(ctx)) {
-                        sb.append("\t* ").append(bn).append('\n');
-                        output.outInfo(sb.toString());
-                    }
+        return (ctx, output) -> {
+            StringBuilder sb = new StringBuilder();
+            String bName = extractURL(input);
+            if (bName.length() == 0) {
+                for (String bn : names(ctx)) {
+                    sb.append("\t* ").append(bn).append('\n');
+                    output.outInfo(sb.toString());
+                }
+            } else {
+                ObjectName objectName = new ObjectName(bName);
+                if (ctx.getServer().isRegistered(objectName)) {
+                    output.outInfo("Attached to bean " + bName);
+                    ctx.setObjectName(objectName);
+                    notifyObservers(objectName);
                 } else {
-                    ObjectName objectName = new ObjectName(bName);
-                    if (ctx.getServer().isRegistered(objectName)) {
-                        output.outInfo("Attached to bean " + bName);
-                        ctx.setObjectName(objectName);
-                        notifyObservers(objectName);
-                    } else {
-                        output.outError("Bean " + bName + " not found.");
-                        ctx.fail(this, 15);
-                        ctx.setObjectName(null);
-                        notifyObservers(null);
-                    }
+                    output.outError("Bean " + bName + " not found.");
+                    ctx.fail(15);
+                    ctx.setObjectName(null);
+                    notifyObservers(null);
                 }
             }
         };
     }
-
 
     @Override
     public Completer getCompleter(final TJContext ctx) {
@@ -80,7 +76,6 @@ public class UseCommandDefinition extends AbstractCommandDefinition {
         };
     }
 
-
     private Collection<String> names(TJContext ctx) throws IOException {
         ArrayList<String> l = new ArrayList<String>();
         for (Object on : ctx.getServer().queryNames(null, null)) {
@@ -89,11 +84,11 @@ public class UseCommandDefinition extends AbstractCommandDefinition {
         return l;
     }
 
-
     private String extractURL(String in) {
         return in.substring(prefix.length()).trim();
     }
 
+    @SuppressWarnings("serial")
     @Override
     public CmdDescription getDescription() {
         CmdDescription d = super.getDescription();

@@ -23,11 +23,10 @@ public class GetAttributeCommandDefinition extends AbstractCommandDefinition {
         super("Get attribute value", "get <attributeName>", "get", true);
     }
 
-
     @Override
     public CommandAction action(String input) {
         final List<String> attributes = new ArrayList<String>(Arrays.asList(input.substring(prefix.length()).trim().split("[ ,]")));
-        for (Iterator<String> it = attributes.iterator(); it.hasNext(); ) {
+        for (Iterator<String> it = attributes.iterator(); it.hasNext();) {
             if (it.next().trim().length() == 0) {
                 it.remove();
             }
@@ -45,9 +44,9 @@ public class GetAttributeCommandDefinition extends AbstractCommandDefinition {
                     output.println("@|cyan " + ai.getName() + "|@ = " + vOut);
                     attributesCopy.remove(ai.getName());
                 }
-                if (! attributesCopy.isEmpty()) {
+                if (!attributesCopy.isEmpty()) {
                     output.outError("Cannot find attributes: " + attributes);
-                    ctx.fail(this, 20);
+                    ctx.fail(20);
                 }
             }
 

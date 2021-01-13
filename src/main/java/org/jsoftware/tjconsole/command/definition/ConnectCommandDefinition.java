@@ -31,7 +31,6 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
     private final List<String> remoteConnectionHistory;
     private final Preferences prefs;
 
-
     public ConnectCommandDefinition() throws BackingStoreException {
         super("Connect to mBean server.", "connect <host>:<port> or <user>:<password>@<host>:<port> or <local jvm pid>", "connect", false);
         remoteConnectionHistory = new ArrayList<String>();
@@ -45,7 +44,8 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
     }
 
     private void addRemote(String rName, boolean b) {
-        if (remoteConnectionHistory.contains(rName)) return;
+        if (remoteConnectionHistory.contains(rName))
+            return;
         remoteConnectionHistory.add(rName);
         if (b) {
             try {
@@ -64,10 +64,10 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
                 final String url = extractURL(input);
                 String messageURL;
                 Map<String, Object> env = null;
-                if (url.length() == 0) {  // current state
+                if (url.length() == 0) { // current state
                     if (ctx.getServer() == null) {
                         output.outError("Not connected to any JMX server.");
-                        ctx.fail(this, 10);
+                        ctx.fail(10);
                     } else {
                         output.outInfo("Connected to " + ctx.getServer().getDefaultDomain());
                     }
@@ -82,7 +82,7 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
                         messageURL = url;
                     } catch (LocalJvmAttachException e) {
                         output.outError("Unable to connect to local JVM. Please enable jmx remote access on your java process. More: https://gist.github.com/m-szalik/93c559bf2ad964078e1e");
-                        ctx.fail(this, 10);
+                        ctx.fail(10);
                         return;
                     }
                 } else {
@@ -101,7 +101,9 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
                             user = passwordAndUser.substring(0, semicolon);
                             password = passwordAndUser.substring(semicolon + 1);
                         }
-                        env.put(JMXConnector.CREDENTIALS, new String[]{user, password});
+                        env.put(JMXConnector.CREDENTIALS, new String[] {
+                            user,
+                            password });
                     } else {
                         hostPort = url;
                     }
@@ -122,7 +124,8 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
                     messageURL = host + ":" + port;
                     saveURL = lm <= 0;
                 }
-                JMXConnector connector = env == null ? JMXConnectorFactory.connect(serviceURL) : JMXConnectorFactory.connect(serviceURL, env);
+                JMXConnector connector =
+                        env == null ? JMXConnectorFactory.connect(serviceURL) : JMXConnectorFactory.connect(serviceURL, env);
                 serverConnection = connector.getMBeanServerConnection();
                 if (serverConnection != null) {
                     output.outInfo("Connected to " + messageURL + ". Default domain name is " + serverConnection.getDefaultDomain());
@@ -136,7 +139,6 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
 
     }
 
-
     @Override
     public Completer getCompleter(TJContext tjContext) {
         return new ConnectCompleter();
@@ -146,7 +148,6 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
     public boolean matches(String input) {
         return input.startsWith(prefix);
     }
-
 
     private String extractURL(String in) {
         return in.substring(prefix.length()).trim();
@@ -164,7 +165,8 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
                     urlCandidate.add(jvm.getShortName());
                 }
                 for (String s : urlCandidate) {
-                    if (s.startsWith(urlPrefix)) candidates.add(" " + s);
+                    if (s.startsWith(urlPrefix))
+                        candidates.add(" " + s);
                 }
                 return prefix.length();
             } else {
@@ -173,4 +175,3 @@ public class ConnectCommandDefinition extends AbstractCommandDefinition {
         }
     }
 }
-

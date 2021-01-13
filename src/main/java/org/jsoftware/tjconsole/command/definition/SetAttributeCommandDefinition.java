@@ -19,7 +19,6 @@ public class SetAttributeCommandDefinition extends AbstractCommandDefinition {
         super("Set attribute value.", "set <attributeName>=<newValue>", "set", true);
     }
 
-
     @Override
     public CommandAction action(String input) {
         String[] data = input.substring(prefix.length()).trim().split("=", 2);
@@ -37,11 +36,11 @@ public class SetAttributeCommandDefinition extends AbstractCommandDefinition {
                 }
                 if (attr == null) {
                     output.outError("No attribute found '" + attribute + "'");
-                    ctx.fail(this, 30);
+                    ctx.fail(30);
                 } else {
                     if (!attr.isWritable()) {
                         output.outError("Attribute " + attribute + " is read only");
-                        ctx.fail(this, 31);
+                        ctx.fail(31);
                         return;
                     }
                     Object val = getValueAsType(valueStr, attr.getType());
@@ -61,7 +60,6 @@ public class SetAttributeCommandDefinition extends AbstractCommandDefinition {
             }
         };
     }
-
 
     private Object getValueAsType(String valInput, String type) {
         if ("null".equalsIgnoreCase(valInput)) {

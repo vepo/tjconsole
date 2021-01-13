@@ -1,15 +1,25 @@
 package org.jsoftware.tjconsole;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.jsoftware.tjconsole.command.CommandAction;
-
-import javax.management.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+
+import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
+
+import org.apache.commons.beanutils.ConvertUtils;
 
 /**
- * Connection context.
- * What user is connected to (server, bean)
+ * Connection context. What user is connected to (server, bean)
  *
  * @author szalik
  */
@@ -37,7 +47,8 @@ public class TJContext extends Observable {
             if (!old.getClass().equals(value.getClass())) {
                 value = ConvertUtils.convert(value, old.getClass());
                 if (!old.getClass().equals(value.getClass())) {
-                    throw new IllegalArgumentException("Invalid value type - " + value.getClass().getName() + " should be " + old.getClass().getName());
+                    throw new IllegalArgumentException("Invalid value type - " + value.getClass().getName() + " should be "
+                            + old.getClass().getName());
                 }
             }
         }
@@ -71,7 +82,8 @@ public class TJContext extends Observable {
         return serverConnection != null;
     }
 
-    public List<MBeanAttributeInfo> getAttributes() throws InstanceNotFoundException, IntrospectionException, ReflectionException, IOException {
+    public List<MBeanAttributeInfo> getAttributes()
+            throws InstanceNotFoundException, IntrospectionException, ReflectionException, IOException {
         if (serverConnection == null || objectName == null) {
             return Collections.emptyList();
         }
@@ -83,12 +95,11 @@ public class TJContext extends Observable {
         return objectName != null;
     }
 
-
     public Object getServerURL() {
         return serverURL;
     }
 
-    public void fail(CommandAction action, int code) {
+    public void fail(int code) {
         if (exitCode == 0) {
             exitCode = code;
         }
@@ -98,5 +109,3 @@ public class TJContext extends Observable {
         return exitCode;
     }
 }
-
-

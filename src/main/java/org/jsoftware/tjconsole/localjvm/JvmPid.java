@@ -1,5 +1,7 @@
 package org.jsoftware.tjconsole.localjvm;
 
+import static java.util.Objects.nonNull;
+
 /**
  * @author szalik
  */
@@ -22,6 +24,11 @@ public class JvmPid {
 
     public String getFullName() {
         return pid + ":" + command;
+    }
+
+    public boolean isValid() {
+        return nonNull(pid) && !pid.isEmpty() &&
+                nonNull(command) && !command.isEmpty();
     }
 
     public String getShortName() {

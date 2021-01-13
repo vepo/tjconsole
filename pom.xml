@@ -1,18 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jsoftware</groupId>
     <artifactId>tjconsole</artifactId>
     <packaging>jar</packaging>
     <version>1.8-SNAPSHOT</version>
-    <url>https://github.com/m-szalik/tjconsole/wiki</url>
+    <url>https://github.com/vepo/tjconsole/wiki</url>
     <name>Text Java Console</name>
     <description>JConsole in text mode, can be used for shell scripting.</description>
 
-    <parent>
-        <groupId>org.jsoftware</groupId>
-        <artifactId>jsoftware</artifactId>
-        <version>1.6.0</version>
-    </parent>
+    <properties>
+        <java.home>C:\Program Files\Java\jdk1.8.0_231\bin</java.home>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+    </properties>
 
     <licenses>
         <license>
@@ -27,6 +29,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+            <version>4.13.1</version>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
@@ -95,15 +98,15 @@
     </build>
 
     <scm>
-        <url>https://github.com/m-szalik/tjconsole.git</url>
-        <connection>scm:git:https://github.com/m-szalik/tjconsole.git</connection>
-        <developerConnection>scm:git:https://github.com/m-szalik/tjconsole.git</developerConnection>
+        <url>https://github.com/vepo/tjconsole.git</url>
+        <connection>scm:git:https://github.com/vepo/tjconsole.git</connection>
+        <developerConnection>scm:git:https://github.com/vepo/tjconsole.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/m-szalik/tjconsole/issues</url>
+        <url>https://github.com/vepo/tjconsole/issues</url>
     </issueManagement>
 
 </project>

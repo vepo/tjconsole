@@ -19,14 +19,13 @@ public class EnvCommandDefinition extends AbstractCommandDefinition {
         super("Set environment variable like username or password", "env <variableName>=<newValue>", "env", false);
     }
 
-
     public CommandAction action(String input) {
         String[] data = input.substring(prefix.length()).trim().split("=", 2);
         if (data.length < 2) {
             return new CommandAction() {
                 @Override
                 public void doAction(TJContext tjContext, Output output) {
-                    for(Map.Entry<String,Object> me : tjContext.getEnvironment().entrySet()) {
+                    for (Map.Entry<String, Object> me : tjContext.getEnvironment().entrySet()) {
                         output.println("@|red " + me.getKey() + "|@ = " + me.getValue());
                     }
                 }
@@ -41,14 +40,13 @@ public class EnvCommandDefinition extends AbstractCommandDefinition {
                         tjContext.setEnvironmentVariable(key, valueStr, true);
                         output.println("@|red " + key + "|@ = " + valueStr);
                     } catch (IllegalArgumentException ex) {
-                        tjContext.fail(this, 60);
+                        tjContext.fail(60);
                         output.outError("Cannot update " + key + " - " + ex.getLocalizedMessage());
                     }
                 }
             };
         }
     }
-
 
     @Override
     public Completer getCompleter(final TJContext tjContext) {
@@ -70,5 +68,3 @@ public class EnvCommandDefinition extends AbstractCommandDefinition {
     }
 
 }
-
-
