@@ -14,6 +14,9 @@
         <java.home>C:\Program Files\Java\jdk1.8.0_231\bin</java.home>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <sonar.projectKey>vepo_tjconsole</sonar.projectKey>
+        <sonar.organization>vepo-github</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <licenses>
